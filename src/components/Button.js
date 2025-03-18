@@ -11,6 +11,7 @@ export default function FloatingButtons() {
                 <button>Button 1</button>
                 <button>Button 2</button>
                 <button>Button 3</button>
+                <img src="/original-image.jpg"></img>
                 </div>
 
                 <button onClick={() => setShowButtons(!showButtons)} className="btn main-btn">
