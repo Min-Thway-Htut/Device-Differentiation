@@ -104,9 +104,6 @@ function DeviceBasedComponent() {
         <div style={{backgroundColor: "lightgreen"}}>
           <h2 className="text-xl font-bold">Desktop-Only Feature</h2>
           <p>This feature is only visible on desktop devices!</p>
-          <p>Alpha: {orientation.alpha}°</p>
-          <p>Beta: {orientation.beta}°</p>
-          <p>Gamma: {orientation.gamma}°</p>
         </div>
       )}
     </div>
