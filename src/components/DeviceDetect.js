@@ -74,7 +74,7 @@ function DeviceBasedComponent() {
   return (
     <div className="p-4 text-center">
       {isMobile && (
-        <div>
+        <div style={{backgroundColor: "lightblue"}}>
           <h2 className="text-xl font-bold">Mobile-Only Feature</h2>
           <p>This feature is only visible on mobile devices!</p>
 
@@ -92,18 +92,21 @@ function DeviceBasedComponent() {
 
           {isSupported && hasPermission && (
             <>
-              <p>Alpha (Z-axis): {orientation.alpha}°</p>
-              <p>Beta (X-axis): {orientation.beta}°</p>
-              <p>Gamma (Y-axis): {orientation.gamma}°</p>
+              <p>Alpha : {orientation.alpha}°</p>
+              <p>Beta : {orientation.beta}°</p>
+              <p>Gamma : {orientation.gamma}°</p>
             </>
           )}
         </div>
       )}
 
       {isDesktop && (
-        <div>
+        <div style={{backgroundColor: "lightgreen"}}>
           <h2 className="text-xl font-bold">Desktop-Only Feature</h2>
           <p>This feature is only visible on desktop devices!</p>
+          <p>Alpha: {orientation.alpha}°</p>
+          <p>Beta: {orientation.beta}°</p>
+          <p>Gamma: {orientation.gamma}°</p>
         </div>
       )}
     </div>
