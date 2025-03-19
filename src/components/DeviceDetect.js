@@ -5,8 +5,8 @@ function DeviceBasedComponent() {
   const [orientation, setOrientation] = useState({ alpha: "N/A", beta: "N/A", gamma: "N/A" });
   const [hasPermission, setHasPermission] = useState(null);
   const [isSupported, setIsSupported] = useState(true);
+  const [showPermissionButton, setShowPermissionButton] = useState(false);
 
-  // Check if the device supports orientation sensors
   useEffect(() => {
     if (typeof DeviceOrientationEvent === "undefined") {
       setIsSupported(false);
@@ -14,44 +14,47 @@ function DeviceBasedComponent() {
     }
   }, []);
 
-  // Request permission for motion and orientation sensors
-  useEffect(() => {
-    const requestPermission = async () => {
-      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-        try {
-          const permission = await DeviceMotionEvent.requestPermission();
-          if (permission === "granted") {
-            setHasPermission(true);
-            console.log("Motion permission granted.");
-          } else {
-            setHasPermission(false);
-            console.error("Motion permission denied.");
-          }
-        } catch (error) {
-          console.error("Error requesting permission:", error);
+  // Function to request motion/orientation permission on iOS
+  const requestPermission = async () => {
+    if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+      try {
+        const permission = await DeviceMotionEvent.requestPermission();
+        if (permission === "granted") {
+          setHasPermission(true);
+          console.log("Motion permission granted.");
+        } else {
           setHasPermission(false);
+          console.error("Motion permission denied.");
         }
-      } else {
-        // Assume permission is granted for non-iOS devices
-        setHasPermission(true);
+      } catch (error) {
+        console.error("Error requesting permission:", error);
+        setHasPermission(false);
       }
-    };
+    } else {
+      setHasPermission(true);
+    }
+  };
 
+  useEffect(() => {
     if (isMobile && isSupported) {
-      requestPermission();
+      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+        setShowPermissionButton(true); // Show button only for iOS devices
+      } else {
+        setHasPermission(true); // Assume permission is granted for non-iOS devices
+      }
     }
   }, [isSupported]);
 
-  // Add event listener for device orientation
   useEffect(() => {
     const handleOrientation = (event) => {
       if (event.alpha !== null && event.beta !== null && event.gamma !== null) {
         console.log("Device orientation updated:", event.alpha, event.beta, event.gamma);
-        setOrientation({
+        setOrientation((prev) => ({
+          ...prev,
           alpha: event.alpha.toFixed(2),
           beta: event.beta.toFixed(2),
           gamma: event.gamma.toFixed(2),
-        });
+        }));
       } else {
         console.warn("Device orientation event received but values are null.");
       }
@@ -62,20 +65,17 @@ function DeviceBasedComponent() {
       window.addEventListener("deviceorientation", handleOrientation);
     }
 
-    // Cleanup event listener
     return () => {
-      if (hasPermission && isMobile && isSupported) {
-        console.log("Removing event listener for device orientation...");
-        window.removeEventListener("deviceorientation", handleOrientation);
-      }
+      console.log("Removing event listener for device orientation...");
+      window.removeEventListener("deviceorientation", handleOrientation);
     };
   }, [hasPermission, isSupported]);
 
   return (
-    <div>
+    <div className="p-4 text-center">
       {isMobile && (
         <div>
-          <h2>Mobile-Only Feature</h2>
+          <h2 className="text-xl font-bold">Mobile-Only Feature</h2>
           <p>This feature is only visible on mobile devices!</p>
 
           {!isSupported && <p>Your device does not support orientation sensors.</p>}
@@ -84,13 +84,17 @@ function DeviceBasedComponent() {
             <p>Permission denied. Enable motion and orientation access in your browser settings.</p>
           )}
 
-          {isSupported && hasPermission === null && <p>Requesting motion and orientation permission...</p>}
+          {isSupported && hasPermission === null && showPermissionButton && (
+            <button onClick={requestPermission} className="bg-blue-500 text-white px-4 py-2 rounded">
+              Request Permission
+            </button>
+          )}
 
           {isSupported && hasPermission && (
             <>
-              <p>Alpha: {orientation.alpha}</p>
-              <p>Beta: {orientation.beta}</p>
-              <p>Gamma: {orientation.gamma}</p>
+              <p>Alpha (Z-axis): {orientation.alpha}°</p>
+              <p>Beta (X-axis): {orientation.beta}°</p>
+              <p>Gamma (Y-axis): {orientation.gamma}°</p>
             </>
           )}
         </div>
@@ -98,7 +102,7 @@ function DeviceBasedComponent() {
 
       {isDesktop && (
         <div>
-          <h2>Desktop-Only Feature</h2>
+          <h2 className="text-xl font-bold">Desktop-Only Feature</h2>
           <p>This feature is only visible on desktop devices!</p>
         </div>
       )}
