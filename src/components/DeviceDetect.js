@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { isMobile, isDesktop } from "react-device-detect";
+import "./styles.css";
 
 function DeviceBasedComponent() {
   const [orientation, setOrientation] = useState({ alpha: "N/A", beta: "N/A", gamma: "N/A" });
@@ -94,7 +95,7 @@ function DeviceBasedComponent() {
   return (
     <div className="p-4 text-center">
       {isMobile && (
-        <div style={{backgroundColor: "lightblue"}}>
+        <div style={{backgroundColor: "none"}}>
           <h2 className="text-xl font-bold">Mobile-Only Feature</h2>
           <p>This feature is only visible on mobile devices!</p>
 
@@ -123,7 +124,7 @@ function DeviceBasedComponent() {
       )}
 
       {isDesktop && (
-        <div style={{backgroundColor: "lightgreen"}}>
+        <div style={{backgroundColor: "none"}}>
           <h2 className="text-xl font-bold">Desktop-Only Feature</h2>
           <p>This feature is only visible on desktop devices!</p>
           <p>Latitude: {location.latitude} </p>
