@@ -6,6 +6,26 @@ function DeviceBasedComponent() {
   const [hasPermission, setHasPermission] = useState(null);
   const [isSupported, setIsSupported] = useState(true);
   const [showPermissionButton, setShowPermissionButton] = useState(false);
+  const [location, setLocation] = useState({latitude: null, longitude: null});
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          setLocation({latitude, longitude});
+        },
+        (err) => {
+          setError("Unable to retrieve location.");
+          console.error(err);
+        }
+      );
+    }else{
+      setError("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof DeviceOrientationEvent === "undefined") {
@@ -14,7 +34,7 @@ function DeviceBasedComponent() {
     }
   }, []);
 
-  // Function to request motion/orientation permission on iOS
+  
   const requestPermission = async () => {
     if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
       try {
@@ -95,6 +115,8 @@ function DeviceBasedComponent() {
               <p>Alpha : {orientation.alpha}°</p>
               <p>Beta : {orientation.beta}°</p>
               <p>Gamma : {orientation.gamma}°</p>
+              <p>Latitude: {location.latitude}°</p>
+              <p>Longitude: {location.longitude}°</p>
             </>
           )}
         </div>
@@ -104,6 +126,8 @@ function DeviceBasedComponent() {
         <div style={{backgroundColor: "lightgreen"}}>
           <h2 className="text-xl font-bold">Desktop-Only Feature</h2>
           <p>This feature is only visible on desktop devices!</p>
+          <p>Latitude: {location.latitude} </p>
+          <p>Longitude: {location.longitude}</p>
         </div>
       )}
     </div>
