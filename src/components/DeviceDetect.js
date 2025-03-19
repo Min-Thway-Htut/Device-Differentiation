@@ -38,9 +38,9 @@ function DeviceBasedComponent() {
   useEffect(() => {
     if (isMobile && isSupported) {
       if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-        setShowPermissionButton(true); // Show button only for iOS devices
+        setShowPermissionButton(true); 
       } else {
-        setHasPermission(true); // Assume permission is granted for non-iOS devices
+        setHasPermission(true); 
       }
     }
   }, [isSupported]);
@@ -51,9 +51,9 @@ function DeviceBasedComponent() {
         console.log("Device orientation updated:", event.alpha, event.beta, event.gamma);
         setOrientation((prev) => ({
           ...prev,
-          alpha: event.alpha.toFixed(2),
-          beta: event.beta.toFixed(2),
-          gamma: event.gamma.toFixed(2),
+          alpha: event.alpha.toFixed(1),
+          beta: event.beta.toFixed(1),
+          gamma: event.gamma.toFixed(1),
         }));
       } else {
         console.warn("Device orientation event received but values are null.");
