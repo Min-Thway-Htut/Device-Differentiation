@@ -7,8 +7,32 @@ function DeviceBasedComponent() {
   const [hasPermission, setHasPermission] = useState(null);
   const [isSupported, setIsSupported] = useState(true);
   const [showPermissionButton, setShowPermissionButton] = useState(false);
-  const [location, setLocation] = useState({latitude: null, longitude: null});
+  const [location, setLocation] = useState({latitude: null, longitude: null, altitude: null});
+  const [acceleration, setAcceleration] = useState({x: null, y: null, z: null});
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const handleMotion = (event) => {
+      if (event.acceleration){
+        setAcceleration({
+          x: event.acceleration.x,
+          y: event.acceleration.y,
+          z: event.acceleration.z,
+        });
+      }
+    };
+
+    if ("DeviceMotionEvent" in window){
+      window.addEventListener("devicemotion", handleMotion);
+    } else {
+      setError("Device motion is not supported by your browser.");
+    }
+
+    return () => {
+      window.removeEventListener("devicemotion", handleMotion);
+    }
+  }, []);
+
 
   useEffect(() => {
     if (navigator.geolocation){
@@ -16,7 +40,8 @@ function DeviceBasedComponent() {
         (position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          setLocation({latitude, longitude});
+          const altitude = position.coords.altitude;
+          setLocation({latitude, longitude, altitude});
         },
         (err) => {
           setError("Unable to retrieve location.");
@@ -113,11 +138,13 @@ function DeviceBasedComponent() {
 
           {isSupported && hasPermission && (
             <>
+              <p>This feature is only visible on the mobile.</p>
               <p>Alpha : {orientation.alpha}°</p>
               <p>Beta : {orientation.beta}°</p>
               <p>Gamma : {orientation.gamma}°</p>
               <p>Latitude: {location.latitude}°</p>
               <p>Longitude: {location.longitude}°</p>
+              <p>Altitude: {location.altitude} </p>
             </>
           )}
         </div>
@@ -129,6 +156,10 @@ function DeviceBasedComponent() {
           <p>This feature is only visible on desktop devices!</p>
           <p>Latitude: {location.latitude} </p>
           <p>Longitude: {location.longitude}</p>
+          <p>Altitude: {location.altitude}</p>
+          <p>Acceleration X: {acceleration.x}</p>
+          <p>Acceleration Y: {acceleration.y}</p>
+          <p>Acceleration Z: {acceleration.z}</p>
         </div>
       )}
     </div>
