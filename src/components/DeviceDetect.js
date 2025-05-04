@@ -118,7 +118,7 @@ function DeviceBasedComponent() {
   }, [hasPermission, isSupported]);
 
   return (
-    <div className="p-4 text-center">
+    <div className="container">
       {isMobile && (
         <div style={{backgroundColor: "none"}}>
           <h2 className="text-xl font-bold">Mobile-Only Feature</h2>
@@ -157,9 +157,6 @@ function DeviceBasedComponent() {
           <p>Latitude: {location.latitude} </p>
           <p>Longitude: {location.longitude}</p>
           <p>Altitude: {location.altitude}</p>
-          <p>Acceleration X: {acceleration.x}</p>
-          <p>Acceleration Y: {acceleration.y}</p>
-          <p>Acceleration Z: {acceleration.z}</p>
         </div>
       )}
     </div>
